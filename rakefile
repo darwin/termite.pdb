@@ -1,0 +1,33 @@
+require 'rake'
+
+ROOT_DIR = File.expand_path('.')
+GEM_NAME = 'termite.pdb'
+
+begin
+  require 'rubygems'
+  require 'jeweler'
+  Jeweler.gemspec = Gem::Specification.new do |s|
+    s.name = GEM_NAME
+    s.summary = "Pdb support for termite"
+    s.email = "antonin@hildebrand.cz"
+    s.homepage = "http://github.com/woid/termite.pdb"
+    s.description = "A GUI wrapper for Python command-line debugger (with TextMate support)"
+    s.authors = ["Antonin Hildebrand"]
+    s.files =  FileList["{lib,bin}/**/*", "VERSION.yml"]
+    s.add_dependency("termite", ">= 0.2.0")
+  end
+rescue LoadError
+  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+end
+
+desc "prepares test gem release and installs it"
+task :test_install => [:gemspec] do
+  puts "Building gem ..."
+  `gem build #{GEM_NAME}.gemspec 1>&2`
+  puts "Uninstalling previous gem"
+  `sudo macgem uninstall #{GEM_NAME} 1>&2`
+  puts "Installing gem"
+  `sudo macgem install #{GEM_NAME}-*.gem 1>&2`
+  puts "Cleaning gem"
+  `rm #{GEM_NAME}-*.gem`
+end
